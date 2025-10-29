@@ -1,7 +1,4 @@
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 using Rooter.Application.Interfaces;
 using Rooter.Application.Services;
 using Rooter.Domain.Entities;
@@ -10,85 +7,81 @@ namespace Rooter.Web.Pages;
 
 /// <summary>
 /// Code-behind for the Analyzer Blazor page.
-/// Handles dependency analysis functionality including file uploads and processing.
+/// Handles dependency analysis functionality for repository auto-detection.
 /// </summary>
 public partial class Analyzer : ComponentBase
 {
     [Inject] public required IProjectAssetsParser ProjectAssetsParser { get; set; }
     [Inject] public required IDependencyAnalyzer DependencyAnalyzer { get; set; }
-    [Inject] public required IJSRuntime JSRuntime { get; set; }
 
-    private InputFile? _fileInput;
+    private string _repositoryPath = "";
     private DependencyGraph? _dependencyGraph;
     private Dictionary<string, List<string>> _versionConflicts = new();
     private string _dependencyGraphJson = "";
     private bool _isLoading = false;
     private string _loadingMessage = "";
     private string _errorMessage = "";
-    private bool _isDragOver = false;
 
-    private async Task _HandleFileSelected(InputFileChangeEventArgs e)
+    /// <summary>
+    /// Analyzes a repository by auto-detecting all project.assets.json files
+    /// </summary>
+    private async Task _AnalyzeRepository()
     {
-        await _ProcessFiles(e.GetMultipleFiles());
-    }
-
-    private async Task _HandleFileDrop(DragEventArgs e)
-    {
-        _isDragOver = false;
-
-        // Note: Blazor Server doesn't support DataTransfer.Files in drag events
-        // This is a limitation - we'll show an appropriate message
-        _errorMessage = "Drag and drop is not supported in Blazor Server. Please use the 'Browse Files' button instead.";
-        StateHasChanged();
-    }
-
-    private void _HandleDragOver(DragEventArgs e)
-    {
-        _isDragOver = true;
-    }
-
-    private void _HandleDragEnter(DragEventArgs e)
-    {
-        _isDragOver = true;
-    }
-
-    private void _HandleDragLeave(DragEventArgs e)
-    {
-        _isDragOver = false;
-    }
-
-    private async Task _OpenFileDialog()
-    {
-        if (_fileInput != null)
+        if (string.IsNullOrWhiteSpace(_repositoryPath))
         {
-            await JSRuntime.InvokeVoidAsync("document.querySelector('input[type=file]').click");
+            _errorMessage = "Please enter a repository path.";
+            StateHasChanged();
+            return;
         }
-    }
 
-    private async Task _ProcessFiles(IReadOnlyList<IBrowserFile> files)
-    {
+        if (!Directory.Exists(_repositoryPath))
+        {
+            _errorMessage = "The specified directory does not exist.";
+            StateHasChanged();
+            return;
+        }
+
         _isLoading = true;
         _errorMessage = "";
-        _loadingMessage = "Processing files...";
+        _loadingMessage = "Scanning repository for project.assets.json files...";
         StateHasChanged();
 
         try
         {
+            // Find all project.assets.json files in the repository
+            var projectAssetsFiles = Directory.GetFiles(
+                _repositoryPath,
+                "project.assets.json",
+                SearchOption.AllDirectories)
+                .Where(f => !f.Contains("\\bin\\") && !f.Contains("/bin/")) // Exclude build output directories
+                .ToList();
+
+            if (projectAssetsFiles.Count == 0)
+            {
+                _errorMessage = "No project.assets.json files found in the specified repository. Make sure to restore NuGet packages first (dotnet restore).";
+                return;
+            }
+
+            _loadingMessage = $"Found {projectAssetsFiles.Count} project.assets.json file(s). Processing...";
+            StateHasChanged();
+
             var projectsData = new List<(string ProjectName, string Content)>();
 
-            foreach (var file in files)
+            foreach (var filePath in projectAssetsFiles)
             {
-                if (file.Name.EndsWith(".json"))
+                try
                 {
-                    _loadingMessage = $"Reading {file.Name}...";
+                    var projectName = _GetProjectNameFromPath(filePath);
+                    _loadingMessage = $"Reading {projectName}...";
                     StateHasChanged();
 
-                    using var stream = file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024); // 10MB limit
-                    using var reader = new StreamReader(stream);
-                    var content = await reader.ReadToEndAsync();
-
-                    var projectName = Path.GetFileNameWithoutExtension(file.Name);
+                    var content = await File.ReadAllTextAsync(filePath);
                     projectsData.Add((projectName, content));
+                }
+                catch (Exception ex)
+                {
+                    // Log but continue with other files
+                    Console.WriteLine($"Error reading {filePath}: {ex.Message}");
                 }
             }
 
@@ -98,12 +91,12 @@ public partial class Analyzer : ComponentBase
             }
             else
             {
-                _errorMessage = "No valid JSON files found in the selected files.";
+                _errorMessage = "Could not read any project.assets.json files.";
             }
         }
         catch (Exception ex)
         {
-            _errorMessage = $"Error processing files: {ex.Message}";
+            _errorMessage = $"Error scanning repository: {ex.Message}";
         }
         finally
         {
@@ -112,6 +105,33 @@ public partial class Analyzer : ComponentBase
         }
     }
 
+    /// <summary>
+    /// Extracts a meaningful project name from the project.assets.json file path
+    /// </summary>
+    /// <param name="filePath">The full path to the project.assets.json file</param>
+    /// <returns>A descriptive project name</returns>
+    private string _GetProjectNameFromPath(string filePath)
+    {
+        // Get the directory containing the project.assets.json file (usually obj folder)
+        var objDirectory = Path.GetDirectoryName(filePath);
+        if (objDirectory != null)
+        {
+            // Get the parent directory (usually the project directory)
+            var projectDirectory = Path.GetDirectoryName(objDirectory);
+            if (projectDirectory != null)
+            {
+                return Path.GetFileName(projectDirectory);
+            }
+        }
+
+        // Fallback to a generic name based on the path
+        return Path.GetFileName(Path.GetDirectoryName(Path.GetDirectoryName(filePath))) ?? "Unknown Project";
+    }
+
+    /// <summary>
+    /// Analyzes projects from the collected project data
+    /// </summary>
+    /// <param name="projectsData">List of project data containing project names and JSON content</param>
     private async Task _AnalyzeProjects(List<(string ProjectName, string Content)> projectsData)
     {
         try
@@ -174,6 +194,9 @@ public partial class Analyzer : ComponentBase
         _dependencyGraph = DependencyAnalyzer.MergeDependencyGraphs(graphs);
     }
 
+    /// <summary>
+    /// Loads example data from the Examples directory
+    /// </summary>
     private async Task _LoadExample()
     {
         _isLoading = true;
@@ -183,40 +206,24 @@ public partial class Analyzer : ComponentBase
 
         try
         {
-            // Use one of the example files
-            var examplePath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Examples", "Example1", "project.assets.json");
+            // Use the Examples directory as a repository
+            var currentDir = Directory.GetCurrentDirectory();
+            var examplesPath = Path.Combine(currentDir, "..", "Examples");
+            var fullExamplesPath = Path.GetFullPath(examplesPath);
 
-            if (!File.Exists(examplePath))
+            if (!Directory.Exists(fullExamplesPath))
             {
-                _errorMessage = "Example file not found";
+                _errorMessage = $"Examples directory not found at: {fullExamplesPath}";
                 return;
             }
 
-            var projectAssets = await ProjectAssetsParser.ParseAsync(examplePath);
-            if (projectAssets == null)
-            {
-                _errorMessage = "Could not parse example file";
-                return;
-            }
-
-            var packages = ProjectAssetsParser.ExtractPackages(projectAssets);
-            _dependencyGraph = DependencyAnalyzer.BuildDependencyGraph(packages, "Example1");
-
-            // Find version conflicts
-            _versionConflicts = DependencyAnalyzer.FindVersionConflicts(_dependencyGraph);
-
-            // Serialize to JSON for display
-            _dependencyGraphJson = System.Text.Json.JsonSerializer.Serialize(_dependencyGraph, new System.Text.Json.JsonSerializerOptions
-            {
-                WriteIndented = true
-            });
+            // Set the repository path and analyze
+            _repositoryPath = fullExamplesPath;
+            await _AnalyzeRepository();
         }
         catch (Exception ex)
         {
             _errorMessage = $"Error loading example: {ex.Message}";
-        }
-        finally
-        {
             _isLoading = false;
             StateHasChanged();
         }

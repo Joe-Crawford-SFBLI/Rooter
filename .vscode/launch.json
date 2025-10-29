@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Rooter.Web",
+            "name": "Launch Rooter.Web (HTTP Only)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
@@ -10,14 +10,54 @@
             "args": [],
             "cwd": "${workspaceFolder}/Rooter.Web",
             "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+                "uriFormat": "%s"
+            },
             "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "ASPNETCORE_URLS": "http://localhost:5066"
             },
             "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
+                "/Views": "${workspaceFolder}/Rooter.Web/Pages",
+                "/Pages": "${workspaceFolder}/Rooter.Web/Pages"
             },
             "justMyCode": false,
-            "requireExactSource": false
+            "requireExactSource": false,
+            "console": "integratedTerminal",
+            "logging": {
+                "moduleLoad": false
+            }
+        },
+        {
+            "name": "Launch Rooter.Web (HTTPS)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/Rooter.Web/bin/Debug/net8.0/Rooter.Web.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Rooter.Web",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https://\\S+)",
+                "uriFormat": "%s"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "ASPNETCORE_URLS": "https://localhost:7214;http://localhost:5066"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Rooter.Web/Pages",
+                "/Pages": "${workspaceFolder}/Rooter.Web/Pages"
+            },
+            "justMyCode": false,
+            "requireExactSource": false,
+            "console": "integratedTerminal",
+            "logging": {
+                "moduleLoad": false
+            }
         },
         {
             "name": "Attach to Rooter.Web",

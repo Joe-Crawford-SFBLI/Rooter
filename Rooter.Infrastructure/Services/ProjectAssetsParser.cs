@@ -88,102 +88,160 @@ public class ProjectAssetsParser : IProjectAssetsParser
         var packages = new List<PackageReference>();
         var processedPackages = new HashSet<string>();
 
+        // Get direct dependencies from projectFileDependencyGroups
+        var directDependencies = _GetDirectDependencies(projectAssets, targetFramework);
+        if (directDependencies.Count == 0)
+            return packages;
+
         // Use the specified target framework or the first available one
         var targetToUse = _GetTargetFramework(projectAssets, targetFramework);
         if (targetToUse == null)
             return packages;
 
-        // Extract direct dependencies
-        foreach (var dependency in targetToUse.Dependencies.Values)
+        // Build package references for direct dependencies
+        foreach (var directDep in directDependencies)
         {
-            if (!processedPackages.Contains(dependency.Id))
+            var packageName = _ExtractPackageNameFromDependencyString(directDep);
+            var packageId = _FindPackageInTargets(targetToUse, packageName);
+
+            if (!string.IsNullOrEmpty(packageId) && !processedPackages.Contains(packageId))
             {
-                packages.Add(_BuildPackageWithDependencies(
-                    dependency,
+                packages.Add(_BuildPackageFromTargets(
+                    packageId,
+                    targetToUse,
                     projectAssets,
-                    processedPackages));
+                    processedPackages,
+                    true));
             }
         }
 
         return packages;
     }
 
-    private TargetFramework? _GetTargetFramework(
+    private List<string> _GetDirectDependencies(
+        ProjectAssets projectAssets,
+        string? targetFramework)
+    {
+        // Get the target framework key
+        var frameworkKey = _GetTargetFrameworkKey(projectAssets, targetFramework);
+        if (string.IsNullOrEmpty(frameworkKey))
+            return new List<string>();
+
+        // Find direct dependencies from projectFileDependencyGroups
+        var directDeps = new List<string>();
+
+        // Check if we have projectFileDependencyGroups
+        if (projectAssets.ProjectFileDependencyGroups.ContainsKey(frameworkKey))
+        {
+            directDeps.AddRange(projectAssets.ProjectFileDependencyGroups[frameworkKey]);
+        }
+
+        return directDeps;
+    }
+
+    private string _ExtractPackageNameFromDependencyString(string dependencyString)
+    {
+        // Format is usually "PackageName >= Version" or just "PackageName"
+        var parts = dependencyString.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        return parts.Length > 0 ? parts[0] : dependencyString;
+    }
+
+    private string? _FindPackageInTargets(TargetFramework targetFramework, string packageName)
+    {
+        // Look for a package ID that starts with the package name
+        return targetFramework.Dependencies.Keys
+            .FirstOrDefault(key => key.StartsWith($"{packageName}/", StringComparison.OrdinalIgnoreCase));
+    }
+
+    private PackageReference _BuildPackageFromTargets(
+        string packageId,
+        TargetFramework targetFramework,
+        ProjectAssets projectAssets,
+        HashSet<string> processedPackages,
+        bool isDirect,
+        int maxDepth = 10,
+        int currentDepth = 0)
+    {
+        var parts = packageId.Split('/');
+        var packageName = parts.Length > 0 ? parts[0] : packageId;
+        var version = parts.Length > 1 ? parts[1] : "1.0.0";
+
+        // If we've reached max depth or are in a circular reference, return basic package info
+        if (currentDepth >= maxDepth || processedPackages.Contains(packageId))
+        {
+            return new PackageReference
+            {
+                Name = packageName,
+                Version = version,
+                Type = "package"
+            };
+        }
+
+        // Mark as processed for this recursion path only
+        processedPackages.Add(packageId);
+
+        var dependencies = new List<PackageReference>();
+
+        // Get the package details from the target framework
+        if (targetFramework.Dependencies.TryGetValue(packageId, out var packageInfo))
+        {
+            // Build dependencies recursively
+            foreach (var depInfo in packageInfo.Dependencies)
+            {
+                var depName = depInfo.Name;
+                var depPackageId = _FindPackageInTargets(targetFramework, depName);
+
+                if (!string.IsNullOrEmpty(depPackageId))
+                {
+                    dependencies.Add(_BuildPackageFromTargets(
+                        depPackageId,
+                        targetFramework,
+                        projectAssets,
+                        processedPackages,
+                        false,
+                        maxDepth,
+                        currentDepth + 1));
+                }
+            }
+        }
+
+        // Remove from processed after building this branch to allow other branches to process it
+        processedPackages.Remove(packageId);
+
+        return new PackageReference
+        {
+            Name = packageName,
+            Version = version,
+            Type = "package",
+            Dependencies = dependencies
+        };
+    }
+
+    private string _GetTargetFrameworkKey(
         ProjectAssets projectAssets,
         string? targetFramework)
     {
         if (!string.IsNullOrEmpty(targetFramework))
         {
-            var exactMatch = projectAssets.Targets
-                .FirstOrDefault(t => t.Key.Contains(targetFramework));
+            var exactMatch = projectAssets.Targets.Keys
+                .FirstOrDefault(key => key.Contains(targetFramework, StringComparison.OrdinalIgnoreCase));
 
-            if (exactMatch.Key != null)
-                return exactMatch.Value;
+            if (!string.IsNullOrEmpty(exactMatch))
+                return exactMatch;
         }
 
-        // Return the first target framework if no specific one is requested
-        return projectAssets.Targets.Values.FirstOrDefault();
+        // Return the first target framework key
+        return projectAssets.Targets.Keys.FirstOrDefault() ?? string.Empty;
     }
 
-    private PackageReference _BuildPackageWithDependencies(
-        PackageReference package,
+    private TargetFramework? _GetTargetFramework(
         ProjectAssets projectAssets,
-        HashSet<string> processedPackages,
-        int maxDepth = 10,
-        int currentDepth = 0)
+        string? targetFramework)
     {
-        if (currentDepth >= maxDepth || processedPackages.Contains(package.Id))
-        {
-            return new PackageReference
-            {
-                Name = package.Name,
-                Version = package.Version,
-                Type = package.Type
-            };
-        }
+        var key = _GetTargetFrameworkKey(projectAssets, targetFramework);
+        if (string.IsNullOrEmpty(key))
+            return null;
 
-        processedPackages.Add(package.Id);
-
-        var dependencies = new List<PackageReference>();
-
-        // Find the library entry for this package
-        var libraryKey = projectAssets.Libraries.Keys
-            .FirstOrDefault(k => k.StartsWith($"{package.Name}/"));
-
-        if (libraryKey != null && projectAssets.Libraries.TryGetValue(libraryKey, out var library))
-        {
-            // Get dependencies from the target framework
-            foreach (var target in projectAssets.Targets.Values)
-            {
-                foreach (var targetDep in target.Dependencies.Values)
-                {
-                    if (targetDep.Name == package.Name)
-                    {
-                        foreach (var dep in targetDep.Dependencies)
-                        {
-                            if (!processedPackages.Contains(dep.Id))
-                            {
-                                dependencies.Add(_BuildPackageWithDependencies(
-                                    dep,
-                                    projectAssets,
-                                    processedPackages,
-                                    maxDepth,
-                                    currentDepth + 1));
-                            }
-                        }
-                        break;
-                    }
-                }
-                break; // Use first target framework for dependencies
-            }
-        }
-
-        return new PackageReference
-        {
-            Name = package.Name,
-            Version = package.Version,
-            Type = package.Type,
-            Dependencies = dependencies
-        };
+        return projectAssets.Targets.TryGetValue(key, out var target) ? target : null;
     }
 }

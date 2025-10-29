@@ -26,12 +26,18 @@ public static class ProjectAssetsMapper
                 kvp => kvp.Key,
                 kvp => kvp.Value.ToDomain());
 
+        var projectFileDependencyGroups = entity.ProjectFileDependencyGroups
+            .ToDictionary(
+                kvp => kvp.Key,
+                kvp => (IReadOnlyList<string>)kvp.Value.AsReadOnly());
+
         return new ProjectAssets
         {
             Version = entity.Version,
             Targets = targets,
             Libraries = libraries,
-            Project = entity.Project?.ToDomain()
+            Project = entity.Project?.ToDomain(),
+            ProjectFileDependencyGroups = projectFileDependencyGroups
         };
     }
 }

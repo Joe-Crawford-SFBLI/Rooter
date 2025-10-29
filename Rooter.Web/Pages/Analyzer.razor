@@ -5,19 +5,21 @@
 <PageTitle>Dependency Analyzer - NuGet Dependency Analyzer</PageTitle>
 
 <h1>NuGet Dependency Analyzer</h1>
-<p>Upload your project.assets.json files to visualize and analyze NuGet package dependencies.</p>
+<p>Analyze NuGet package dependencies by pointing to a repository - we'll auto-detect all project.assets.json files.</p>
 
-<div class="upload-area @(_isDragOver ? "dragover" : "")" @ondrop="_HandleFileDrop" @ondrop:preventDefault="true"
-    @ondragover="_HandleDragOver" @ondragover:preventDefault="true" @ondragenter="_HandleDragEnter"
-    @ondragleave="_HandleDragLeave">
-
-    <p>Drop project.assets.json files here or click to browse</p>
-    <InputFile OnChange="_HandleFileSelected" multiple accept=".json" style="display: none;" @ref="_fileInput" />
-    <button class="btn btn-primary" @onclick="_OpenFileDialog">Browse Files</button>
-</div>
-
-<div class="mt-3">
-    <button class="btn btn-secondary" @onclick="_LoadExample">Load Example</button>
+<div class="card mt-4">
+    <div class="card-header">
+        <h4>Repository Auto-Detect</h4>
+    </div>
+    <div class="card-body">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="C:\path\to\repository" @bind="_repositoryPath" />
+            <button class="btn btn-success" type="button" @onclick="_AnalyzeRepository">Auto-Detect & Analyze</button>
+        </div>
+        <div class="mt-3">
+            <button class="btn btn-secondary" @onclick="_LoadExample">Load Example</button>
+        </div>
+    </div>
 </div>
 
 @if (_isLoading)

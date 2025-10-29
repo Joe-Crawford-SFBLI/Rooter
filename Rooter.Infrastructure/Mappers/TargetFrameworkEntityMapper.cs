@@ -18,13 +18,12 @@ public static class TargetFrameworkEntityMapper
     {
         var dependencies = new Dictionary<string, PackageReference>();
 
-        if (entity.Dependencies != null)
+        // TargetFrameworkEntity is now a Dictionary<string, PackageReferenceEntity>
+        // where the key is the package/version (e.g., "AutoMapper/12.0.0")
+        foreach (var package in entity)
         {
-            foreach (var dep in entity.Dependencies)
-            {
-                var packageRef = dep.Value.ToDomain(dep.Key);
-                dependencies[dep.Key] = packageRef;
-            }
+            var packageRef = package.Value.ToDomain(package.Key);
+            dependencies[package.Key] = packageRef;
         }
 
         return new TargetFramework

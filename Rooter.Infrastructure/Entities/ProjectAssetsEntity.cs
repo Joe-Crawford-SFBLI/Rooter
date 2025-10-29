@@ -21,5 +21,5 @@ public class ProjectAssetsEntity
     public ProjectInfoEntity? Project { get; set; }
 
     [JsonPropertyName("projectFileDependencyGroups")]
-    public Dictionary<string, List<string>>? ProjectFileDependencyGroups { get; set; }
+    public Dictionary<string, List<string>> ProjectFileDependencyGroups { get; set; } = new();
 }

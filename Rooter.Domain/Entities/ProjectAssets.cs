@@ -25,4 +25,9 @@ public class ProjectAssets
     /// Information about the project itself.
     /// </summary>
     public ProjectInfo? Project { get; init; }
+
+    /// <summary>
+    /// Direct dependencies grouped by target framework.
+    /// </summary>
+    public IReadOnlyDictionary<string, IReadOnlyList<string>> ProjectFileDependencyGroups { get; init; } = new Dictionary<string, IReadOnlyList<string>>();
 }
