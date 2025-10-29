@@ -162,6 +162,159 @@
             height: 16px;
             border-radius: 50%;
         }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #ecf0f1;
+            margin-bottom: 20px;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #7f8c8d;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            color: #2c3e50;
+            border-bottom-color: #3498db;
+        }
+
+        .tab-button:hover {
+            color: #2c3e50;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .path-input-section {
+            margin: 20px 0;
+        }
+
+        .path-input-group {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: #f9f9f9;
+        }
+
+        .path-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-bottom: 10px;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+
+        .path-textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-bottom: 10px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            resize: vertical;
+        }
+
+        .discover-section {
+            margin: 20px 0;
+        }
+
+        .project-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #f9f9f9;
+        }
+
+        .project-checkbox {
+            margin-right: 10px;
+        }
+
+        .project-info {
+            flex: 1;
+        }
+
+        .project-name {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .project-path {
+            font-size: 12px;
+            color: #7f8c8d;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+
+        .notice {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+
+        .help-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .help-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .help-item {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 6px;
+            border-left: 4px solid #3498db;
+        }
+
+        .help-item h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+
+        .help-item ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .help-item li {
+            margin: 5px 0;
+        }
+
+        .help-item code {
+            background: #ecf0f1;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 12px;
+        }
     </style>
 </head>
 
@@ -173,12 +326,97 @@
 
     <div class="container">
         <div class="upload-section">
-            <h2>Upload Project Files</h2>
-            <div class="upload-area" id="uploadArea">
-                <p>Drop project.assets.json files here or click to browse</p>
-                <input type="file" id="fileInput" multiple accept=".json" style="display: none;">
-                <button class="btn" onclick="document.getElementById('fileInput').click()">Browse Files</button>
-                <button class="btn btn-secondary" onclick="loadExample()">Load Example</button>
+            <div class="tabs">
+                <button class="tab-button active" onclick="showTab('file-path')">File Path</button>
+                <button class="tab-button" onclick="showTab('discover')">Auto Discover</button>
+                <button class="tab-button" onclick="showTab('upload')">Upload Files</button>
+            </div>
+
+            <!-- File Path Tab -->
+            <div id="file-path" class="tab-content active">
+                <h2>Analyze from File Path</h2>
+                <p>Enter the full path to your project.assets.json file(s)</p>
+                <div class="path-input-section">
+                    <div class="path-input-group">
+                        <input type="text" id="singleFilePath"
+                            placeholder="C:\path\to\your\project\obj\project.assets.json" class="path-input">
+                        <input type="text" id="projectName" placeholder="Project Name (optional)" class="path-input">
+                        <button class="btn" onclick="analyzeFromPath()">Analyze Single Project</button>
+                    </div>
+                    <div class="path-input-group">
+                        <textarea id="multipleFilePaths"
+                            placeholder="Enter multiple paths, one per line:&#10;C:\path\to\project1\obj\project.assets.json&#10;C:\path\to\project2\obj\project.assets.json"
+                            rows="4" class="path-textarea"></textarea>
+                        <button class="btn" onclick="analyzeMultiplePaths()">Analyze Multiple Projects</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Auto Discover Tab -->
+            <div id="discover" class="tab-content">
+                <h2>Auto Discover Projects</h2>
+                <p>Automatically find all project.assets.json files in a directory</p>
+                <div class="discover-section">
+                    <input type="text" id="searchPath" placeholder="C:\path\to\your\solution\directory"
+                        class="path-input">
+                    <button class="btn" onclick="discoverProjects()">Discover Projects</button>
+                </div>
+                <div id="discoveredProjects" style="display: none;">
+                    <h3>Found Projects:</h3>
+                    <div id="projectList"></div>
+                    <button class="btn" onclick="analyzeSelectedProjects()">Analyze Selected</button>
+                </div>
+            </div>
+
+            <!-- Upload Files Tab -->
+            <div id="upload" class="tab-content">
+                <h2>Upload Project Files</h2>
+                <div class="notice">
+                    <p><strong>Note:</strong> File uploads may be blocked by security policies. Use the "File Path" or
+                        "Auto Discover" tabs instead.</p>
+                </div>
+                <div class="upload-area" id="uploadArea">
+                    <p>Drop project.assets.json files here or click to browse</p>
+                    <input type="file" id="fileInput" multiple accept=".json" style="display: none;">
+                    <button class="btn" onclick="document.getElementById('fileInput').click()">Browse Files</button>
+                    <button class="btn btn-secondary" onclick="loadExample()">Load Example</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Help Section -->
+        <div class="help-section">
+            <h2>How to Use This Tool</h2>
+            <div class="help-grid">
+                <div class="help-item">
+                    <h3>🗂️ File Path</h3>
+                    <p>Directly specify the path to your project.assets.json file(s). Best for analyzing specific
+                        projects.</p>
+                    <ul>
+                        <li>Single project: Enter one file path</li>
+                        <li>Multiple projects: Enter multiple paths, one per line</li>
+                        <li>Example: <code>C:\MyProject\obj\project.assets.json</code></li>
+                    </ul>
+                </div>
+                <div class="help-item">
+                    <h3>🔍 Auto Discover</h3>
+                    <p>Automatically find all project.assets.json files in a directory tree. Perfect for analyzing
+                        entire solutions.</p>
+                    <ul>
+                        <li>Enter a directory path (or leave blank for current directory)</li>
+                        <li>Select which projects to analyze</li>
+                        <li>Great for solution-wide dependency analysis</li>
+                    </ul>
+                </div>
+                <div class="help-item">
+                    <h3>📁 Finding project.assets.json</h3>
+                    <p>The project.assets.json file is generated after restoring NuGet packages:</p>
+                    <ul>
+                        <li>Run <code>dotnet restore</code> in your project directory</li>
+                        <li>File location: <code>YourProject\obj\project.assets.json</code></li>
+                        <li>Each project has its own file in its obj folder</li>
+                    </ul>
+                </div>
             </div>
         </div>
 
@@ -223,6 +461,7 @@
         let cy;
         let currentGraph = null;
         let originalGraph = null;
+        let discoveredProjects = [];
 
         const uploadArea = document.getElementById('uploadArea');
         const fileInput = document.getElementById('fileInput');
@@ -608,6 +847,193 @@
                 cy.style().update();
             }
         });
+
+        // Tab functionality
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // File path analysis functions
+        async function analyzeFromPath() {
+            const filePath = document.getElementById('singleFilePath').value.trim();
+            const projectName = document.getElementById('projectName').value.trim();
+
+            if (!filePath) {
+                alert('Please enter a file path');
+                return;
+            }
+
+            try {
+                showLoading();
+
+                const response = await fetch('/api/dependency/analyze-path', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        filePath: filePath,
+                        projectName: projectName || null
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+
+                const graph = await response.json();
+                originalGraph = graph;
+                currentGraph = graph;
+                displayGraph(graph);
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert(`Error: ${error.message}`);
+            }
+        }
+
+        async function analyzeMultiplePaths() {
+            const pathsText = document.getElementById('multipleFilePaths').value.trim();
+
+            if (!pathsText) {
+                alert('Please enter at least one file path');
+                return;
+            }
+
+            const paths = pathsText.split('\n')
+                .map(path => path.trim())
+                .filter(path => path.length > 0)
+                .map(path => ({ filePath: path }));
+
+            if (paths.length === 0) {
+                alert('Please enter valid file paths');
+                return;
+            }
+
+            try {
+                showLoading();
+
+                const response = await fetch('/api/dependency/analyze-multiple-paths', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ filePaths: paths })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+
+                const graph = await response.json();
+                originalGraph = graph;
+                currentGraph = graph;
+                displayGraph(graph);
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert(`Error: ${error.message}`);
+            }
+        }
+
+        async function discoverProjects() {
+            const searchPath = document.getElementById('searchPath').value.trim() || null;
+
+            try {
+                const response = await fetch('/api/dependency/discover-projects', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ searchPath: searchPath })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+
+                discoveredProjects = await response.json();
+                displayDiscoveredProjects();
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert(`Error: ${error.message}`);
+            }
+        }
+
+        function displayDiscoveredProjects() {
+            const projectList = document.getElementById('projectList');
+
+            if (discoveredProjects.length === 0) {
+                projectList.innerHTML = '<p>No projects found in the specified directory.</p>';
+            } else {
+                const html = discoveredProjects.map((project, index) => `
+                    <div class="project-item">
+                        <input type="checkbox" id="project-${index}" class="project-checkbox" checked>
+                        <div class="project-info">
+                            <div class="project-name">${project.projectName}</div>
+                            <div class="project-path">${project.projectAssetsPath}</div>
+                        </div>
+                    </div>
+                `).join('');
+
+                projectList.innerHTML = html;
+            }
+
+            document.getElementById('discoveredProjects').style.display = 'block';
+        }
+
+        async function analyzeSelectedProjects() {
+            const selectedProjects = [];
+
+            discoveredProjects.forEach((project, index) => {
+                const checkbox = document.getElementById(`project-${index}`);
+                if (checkbox && checkbox.checked) {
+                    selectedProjects.push({
+                        filePath: project.projectAssetsPath,
+                        projectName: project.projectName
+                    });
+                }
+            });
+
+            if (selectedProjects.length === 0) {
+                alert('Please select at least one project');
+                return;
+            }
+
+            try {
+                showLoading();
+
+                const response = await fetch('/api/dependency/analyze-multiple-paths', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ filePaths: selectedProjects })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+
+                const graph = await response.json();
+                originalGraph = graph;
+                currentGraph = graph;
+                displayGraph(graph);
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert(`Error: ${error.message}`);
+            }
+        }
     </script>
 </body>
 
