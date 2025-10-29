@@ -1,0 +1,178 @@
+/* Index Page Component Styles */
+h1[b-x8e5tq9wdp] {
+    color: #2c3e50;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    background: linear-gradient(135deg, #2c3e50 0%, #74b9ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+p[b-x8e5tq9wdp] {
+    font-size: 1.1rem;
+    color: #6c757d;
+    text-align: center;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+}
+
+/* Card Styling */
+.card[b-x8e5tq9wdp] {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    background: #ffffff;
+    height: 100%;
+}
+
+.card:hover[b-x8e5tq9wdp] {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.card-header[b-x8e5tq9wdp] {
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    border-bottom: none;
+    padding: 1.25rem 1.5rem;
+    color: white;
+    font-weight: 600;
+}
+
+.card-header h3[b-x8e5tq9wdp] {
+    margin: 0;
+    font-size: 1.25rem;
+    color: white;
+}
+
+.card-body[b-x8e5tq9wdp] {
+    padding: 1.5rem;
+    background-color: #ffffff;
+}
+
+/* List styling in cards */
+.card-body ul[b-x8e5tq9wdp] {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.card-body ul li[b-x8e5tq9wdp] {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f1f3f4;
+    position: relative;
+    padding-left: 1.5rem;
+    color: #495057;
+    transition: color 0.2s ease;
+}
+
+.card-body ul li:last-child[b-x8e5tq9wdp] {
+    border-bottom: none;
+}
+
+.card-body ul li[b-x8e5tq9wdp]:before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #28a745;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.card-body ul li:hover[b-x8e5tq9wdp] {
+    color: #007acc;
+}
+
+/* Ordered list styling */
+.card-body ol[b-x8e5tq9wdp] {
+    padding-left: 1.2rem;
+    margin-bottom: 0;
+}
+
+.card-body ol li[b-x8e5tq9wdp] {
+    padding: 0.5rem 0;
+    color: #495057;
+    line-height: 1.5;
+    transition: color 0.2s ease;
+}
+
+.card-body ol li:hover[b-x8e5tq9wdp] {
+    color: #007acc;
+}
+
+.card-body ol li[b-x8e5tq9wdp]::marker {
+    color: #74b9ff;
+    font-weight: bold;
+}
+
+/* Links in card bodies */
+.card-body a[b-x8e5tq9wdp] {
+    color: #007acc;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.card-body a:hover[b-x8e5tq9wdp] {
+    color: #005a9e;
+    text-decoration: underline;
+}
+
+.card-body code[b-x8e5tq9wdp] {
+    background-color: #f8f9fa;
+    color: #e83e8c;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.9em;
+    border: 1px solid #e9ecef;
+}
+
+/* Start Analysis Button */
+.btn-lg[b-x8e5tq9wdp] {
+    padding: 0.75rem 2rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    border: none;
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    box-shadow: 0 4px 15px rgba(116, 185, 255, 0.4);
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+    text-decoration: none;
+    color: white;
+}
+
+.btn-lg:hover[b-x8e5tq9wdp] {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(116, 185, 255, 0.6);
+    background: linear-gradient(135deg, #0984e3 0%, #74b9ff 100%);
+    color: white;
+}
+
+.btn-lg:active[b-x8e5tq9wdp] {
+    transform: translateY(0);
+    box-shadow: 0 4px 15px rgba(116, 185, 255, 0.4);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    h1[b-x8e5tq9wdp] {
+        font-size: 2rem;
+    }
+    
+    .card[b-x8e5tq9wdp] {
+        margin-bottom: 1.5rem;
+    }
+    
+    .card-body[b-x8e5tq9wdp] {
+        padding: 1rem;
+    }
+}

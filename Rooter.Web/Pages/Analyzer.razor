@@ -1,0 +1,133 @@
+@page "/analyzer"
+@using Rooter.Application.Interfaces
+@using Rooter.Domain.Entities
+
+<PageTitle>Dependency Analyzer - NuGet Dependency Analyzer</PageTitle>
+
+<h1>NuGet Dependency Analyzer</h1>
+<p>Upload your project.assets.json files to visualize and analyze NuGet package dependencies.</p>
+
+<div class="upload-area @(_isDragOver ? "dragover" : "")" @ondrop="_HandleFileDrop" @ondrop:preventDefault="true"
+    @ondragover="_HandleDragOver" @ondragover:preventDefault="true" @ondragenter="_HandleDragEnter"
+    @ondragleave="_HandleDragLeave">
+
+    <p>Drop project.assets.json files here or click to browse</p>
+    <InputFile OnChange="_HandleFileSelected" multiple accept=".json" style="display: none;" @ref="_fileInput" />
+    <button class="btn btn-primary" @onclick="_OpenFileDialog">Browse Files</button>
+</div>
+
+<div class="mt-3">
+    <button class="btn btn-secondary" @onclick="_LoadExample">Load Example</button>
+</div>
+
+@if (_isLoading)
+{
+    <div class="mt-4">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <span class="ms-2">@_loadingMessage</span>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(_errorMessage))
+{
+    <div class="alert alert-danger mt-4" role="alert">
+        @_errorMessage
+    </div>
+}
+
+@if (_dependencyGraph != null)
+{
+    <div class="graph-container mt-4">
+        <h2>Dependency Analysis Results</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Project:</strong> @_dependencyGraph.ProjectName</p>
+                <p><strong>Target Framework:</strong> @_dependencyGraph.TargetFramework</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Total Packages:</strong> @_dependencyGraph.Packages.Count</p>
+                <p><strong>Total Dependencies:</strong> @_dependencyGraph.Dependencies.Count</p>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <h3>Direct Dependencies</h3>
+                <div class="package-list">
+                    @{
+                        var directDeps = _dependencyGraph.Packages.Values.Where(p => p.IsDirectDependency).OrderBy(p => p.Name);
+                    }
+                    @if (directDeps.Any())
+                    {
+                        <ul class="list-group">
+                            @foreach (var package in directDeps)
+                            {
+                                <li class="list-group-item direct-dependency">
+                                    @package.Name v@package.Version
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No direct dependencies found.</p>
+                    }
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h3>Transitive Dependencies</h3>
+                <div class="package-list">
+                    @{
+                        var transitiveDeps = _dependencyGraph.Packages.Values.Where(p => !p.IsDirectDependency).OrderBy(p =>
+                        p.Name);
+                    }
+                    @if (transitiveDeps.Any())
+                    {
+                        <ul class="list-group">
+                            @foreach (var package in transitiveDeps.Take(20))
+                            {
+                                <li class="list-group-item transitive-dependency">
+                                    @package.Name v@package.Version
+                                </li>
+                            }
+                            @if (transitiveDeps.Count() > 20)
+                            {
+                                <li class="list-group-item text-muted">
+                                    ... and @(transitiveDeps.Count() - 20) more
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No transitive dependencies found.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        @if (_versionConflicts.Any())
+        {
+            <div class="mt-4">
+                <h3>Version Conflicts</h3>
+                <div class="alert alert-warning">
+                    <ul class="mb-0">
+                        @foreach (var conflict in _versionConflicts)
+                        {
+                            <li>
+                                <strong>@conflict.Key:</strong> @string.Join(", ", conflict.Value)
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        }
+
+        <div class="mt-4">
+            <h3>Dependency Graph (JSON)</h3>
+            <pre class="bg-light p-3" style="max-height: 400px; overflow-y: auto;">@_dependencyGraphJson</pre>
+        </div>
+    </div>
+}

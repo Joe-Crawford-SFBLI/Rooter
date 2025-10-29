@@ -1,0 +1,16 @@
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Application\bin\Debug\net8.0\Rooter.Application.deps.json
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Application\bin\Debug\net8.0\Rooter.Application.dll
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Application\bin\Debug\net8.0\Rooter.Application.pdb
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Application\bin\Debug\net8.0\Rooter.Domain.dll
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Application\bin\Debug\net8.0\Rooter.Domain.pdb
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Application\obj\Debug\net8.0\Rooter.Application.csproj.AssemblyReference.cache
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Application\obj\Debug\net8.0\Rooter.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Application\obj\Debug\net8.0\Rooter.Application.AssemblyInfoInputs.cache
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Application\obj\Debug\net8.0\Rooter.Application.AssemblyInfo.cs
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Application\obj\Debug\net8.0\Rooter.Application.csproj.CoreCompileInputs.cache
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Application\obj\Debug\net8.0\Rooter.Application.sourcelink.json
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Application\obj\Debug\net8.0\Rooter.A.2F913BD0.Up2Date
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Application\obj\Debug\net8.0\Rooter.Application.dll
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Application\obj\Debug\net8.0\refint\Rooter.Application.dll
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Application\obj\Debug\net8.0\Rooter.Application.pdb
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Application\obj\Debug\net8.0\ref\Rooter.Application.dll
