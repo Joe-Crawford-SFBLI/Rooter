@@ -258,26 +258,514 @@ pre[b-zi2uow66vw]::-webkit-scrollbar-thumb:hover {
     margin-bottom: 0;
 }
 
+/* Package Selector Styles */
+.input-group .form-control[b-zi2uow66vw] {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.input-group .btn-primary[b-zi2uow66vw] {
+    background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    border: none;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    padding: 0.375rem 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.input-group .btn-primary:hover[b-zi2uow66vw] {
+    background: linear-gradient(135deg, #0984e3 0%, #74b9ff 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(116, 185, 255, 0.4);
+}
+
+.form-check[b-zi2uow66vw] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.form-check-input:checked[b-zi2uow66vw] {
+    background-color: #74b9ff;
+    border-color: #74b9ff;
+}
+
+.form-check-label[b-zi2uow66vw] {
+    font-weight: 500;
+    color: #4a5568;
+    margin-left: 0.5rem;
+}
+
+/* Mermaid Chart Container */
+.mermaid-container-wrapper[b-zi2uow66vw] {
+    position: relative;
+    width: 100%;
+    height: 600px;
+    background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+    border-radius: 0 0 8px 8px;
+    overflow: auto; /* Changed from hidden to auto to prevent cutoff */
+}
+
+/* True fullscreen styles */
+.mermaid-container-wrapper.fullscreen[b-zi2uow66vw] {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 99999 !important;
+    border-radius: 0 !important;
+    background: #ffffff !important;
+    pointer-events: auto !important;
+    user-select: none;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.mermaid-container-wrapper.fullscreen .mermaid-container[b-zi2uow66vw] {
+    height: calc(100vh - 80px) !important;
+    /* Account for package selector and controls */
+    width: 100% !important;
+}
+
+/* Fullscreen package selector */
+.fullscreen-package-selector[b-zi2uow66vw] {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    background: rgba(248, 250, 252, 0.98) !important;
+    padding: 1rem !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    backdrop-filter: blur(8px) !important;
+    z-index: 10 !important;
+    pointer-events: auto !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.fullscreen-package-selector .input-group[b-zi2uow66vw] {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.fullscreen-package-selector .alert[b-zi2uow66vw] {
+    max-width: 600px;
+    margin: 0 auto;
+    font-size: 0.875rem;
+}
+
+/* Enhanced Mermaid styling for better text display */
+.mermaid-chart .mermaid .node rect[b-zi2uow66vw] {
+    /* Force much larger minimum dimensions to ensure text visibility */
+    min-width: 250px !important;
+    min-height: 120px !important;
+    width: 250px !important;
+    height: 120px !important;
+    rx: 8px !important;
+    ry: 8px !important;
+}
+
+.mermaid-chart .mermaid .node text[b-zi2uow66vw] {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    text-anchor: middle !important;
+    fill: currentColor !important;
+}
+
+.mermaid-chart .mermaid .node .label[b-zi2uow66vw] {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: inherit !important;
+}
+
+/* Ensure text fits properly in nodes */
+.mermaid-chart .mermaid .node text tspan[b-zi2uow66vw] {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+}
+
+/* Override Mermaid's default text wrapping for better readability */
+.mermaid-chart .mermaid .node .label foreignObject[b-zi2uow66vw] {
+    width: 240px !important;
+    height: 110px !important;
+    overflow: visible !important;
+}
+
+.mermaid-chart .mermaid .node .label div[b-zi2uow66vw] {
+    text-align: center !important;
+    vertical-align: middle !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+    padding: 12px !important;
+    box-sizing: border-box !important;
+    line-height: 1.3 !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+}
+
+/* Fullscreen mode adjustments for Mermaid */
+.mermaid-container-wrapper.fullscreen .mermaid-chart[b-zi2uow66vw] {
+    padding: 6rem 2rem 2rem 2rem !important;
+    height: calc(100vh - 80px) !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+.mermaid-container-wrapper.fullscreen .interaction-hint[b-zi2uow66vw] {
+    top: 90px !important;
+    /* Account for fullscreen selector */
+    background: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(4px) !important;
+}
+
+/* Better sizing for fullscreen mode - larger for better visibility */
+.mermaid-container-wrapper.fullscreen .mermaid .node rect[b-zi2uow66vw] {
+    min-width: 300px !important;
+    min-height: 150px !important;
+    width: 300px !important;
+    height: 150px !important;
+}
+
+.mermaid-container-wrapper.fullscreen .mermaid .node text[b-zi2uow66vw] {
+    font-size: 16px !important;
+    font-weight: 600 !important;
+}
+
+.mermaid-container-wrapper.fullscreen .mermaid .node .label[b-zi2uow66vw] {
+    font-size: 16px !important;
+    font-weight: 600 !important;
+}
+
+.mermaid-container-wrapper.fullscreen .mermaid .node text tspan[b-zi2uow66vw] {
+    font-size: 16px !important;
+    font-weight: 600 !important;
+}
+
+.mermaid-container-wrapper.fullscreen .mermaid .node .label foreignObject[b-zi2uow66vw] {
+    width: 190px !important;
+    height: 90px !important;
+}
+
+/* Ensure proper z-index stacking */
+.chart-controls[b-zi2uow66vw] {
+    position: relative;
+    z-index: 20;
+}
+
+/* Fullscreen chart card adjustments */
+.mermaid-container-wrapper.fullscreen .card-header[b-zi2uow66vw] {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 15 !important;
+    background: rgba(248, 250, 252, 0.95) !important;
+    backdrop-filter: blur(4px) !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    margin: 0 !important;
+}
+
+/* Hide regular chart header in fullscreen to avoid duplication */
+.mermaid-container-wrapper.fullscreen~.card .card-header[b-zi2uow66vw] {
+    display: none !important;
+}
+
+/* Native fullscreen styles */
+.mermaid-container-wrapper:fullscreen[b-zi2uow66vw] {
+    background: #ffffff !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.mermaid-container-wrapper:fullscreen .mermaid-chart[b-zi2uow66vw] {
+    flex: 1 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 2rem !important;
+}
+
+.mermaid-container-wrapper:fullscreen .fullscreen-package-selector[b-zi2uow66vw] {
+    position: relative !important;
+    top: 0 !important;
+    flex-shrink: 0 !important;
+}
+
+/* Active state for fullscreen button */
+.chart-controls .btn-outline-success.active[b-zi2uow66vw] {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
+}
+
+/* Improved button icons fallback */
+.chart-controls .btn[title="Toggle Fullscreen"][b-zi2uow66vw]::before {
+    content: '⛶';
+}
+
+.mermaid-container[b-zi2uow66vw] {
+    width: 100%;
+    height: 100%;
+    overflow: visible; /* Changed to visible to prevent cutoff */
+    position: relative;
+    cursor: grab;
+    transition: transform 0.2s ease;
+    transform-origin: center center;
+    min-width: 100%;
+    min-height: 100%;
+}
+
+.mermaid-container.panning[b-zi2uow66vw] {
+    cursor: grabbing;
+}
+
+.mermaid-container.pan-mode[b-zi2uow66vw] {
+    cursor: grab;
+}
+
+.mermaid-chart[b-zi2uow66vw] {
+    min-height: 400px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    box-sizing: border-box;
+    overflow: visible;
+}
+
+.mermaid-chart .mermaid[b-zi2uow66vw] {
+    width: 100%;
+    max-width: none;
+    transition: transform 0.2s ease;
+    overflow: visible;
+    /* Ensure proper transform origin for zoom operations */
+    transform-origin: center center;
+}
+
+/* Additional text handling improvements */
+.mermaid-chart .mermaid .node .label text[b-zi2uow66vw] {
+    dominant-baseline: central !important;
+    text-anchor: middle !important;
+    white-space: pre-wrap !important;
+}
+
+/* Ensure SVG elements don't get clipped */
+.mermaid-chart svg[b-zi2uow66vw] {
+    overflow: visible !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 400px !important;
+}
+
+/* Chart Controls */
+.chart-controls[b-zi2uow66vw] {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.chart-controls .btn[b-zi2uow66vw] {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.chart-controls .btn i[b-zi2uow66vw] {
+    font-size: 0.875rem;
+}
+
+.chart-controls .btn:hover[b-zi2uow66vw] {
+    transform: translateY(-1px);
+}
+
+.chart-controls .btn-outline-success:hover[b-zi2uow66vw] {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
+}
+
+/* Zoom Level Display */
+.zoom-level-display[b-zi2uow66vw] {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #4a5568;
+    background: rgba(116, 185, 255, 0.1);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    border: 1px solid rgba(116, 185, 255, 0.3);
+}
+
+/* Interaction Hint */
+.interaction-hint[b-zi2uow66vw] {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    color: #6b7280;
+    z-index: 10;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(226, 232, 240, 0.5);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pan-hint[b-zi2uow66vw] {
+    margin-left: 0.5rem;
+    color: #74b9ff;
+    font-style: italic;
+    animation: pulse-b-zi2uow66vw 2s infinite;
+}
+
+@keyframes pulse-b-zi2uow66vw {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+}
+
+/* Pan Mode Active State */
+.chart-controls .btn-outline-info.active[b-zi2uow66vw] {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+    color: white;
+}
+
+/* Fallback for FontAwesome icons */
+.chart-controls .btn[b-zi2uow66vw]::before {
+    font-family: 'Font Awesome 5 Free', 'Font Awesome 6 Free', sans-serif;
+    font-weight: 900;
+    font-size: 0.875rem;
+}
+
+.chart-controls .btn[title="Zoom In"][b-zi2uow66vw]::before {
+    content: '+';
+}
+
+.chart-controls .btn[title="Zoom Out"][b-zi2uow66vw]::before {
+    content: '−';
+}
+
+.chart-controls .btn[title="Reset Zoom"][b-zi2uow66vw]::before {
+    content: '⌂';
+}
+
+.chart-controls .btn[title="Toggle Pan Mode"][b-zi2uow66vw]::before {
+    content: '✋';
+}
+
+/* Loading state for Mermaid */
+.mermaid-chart:empty[b-zi2uow66vw]::before {
+    content: "Generate a chart by selecting a package above";
+    color: #9ca3af;
+    font-style: italic;
+    font-size: 1.1rem;
+}
+
+/* Card Enhancements */
+.card[b-zi2uow66vw] {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.card:hover[b-zi2uow66vw] {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.card-header[b-zi2uow66vw] {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    border-bottom: 1px solid #e2e8f0;
+    border-radius: 12px 12px 0 0 !important;
+    padding: 1rem 1.25rem;
+}
+
+.card-header h5[b-zi2uow66vw] {
+    color: #2d3748;
+    font-weight: 600;
+    margin: 0;
+}
+
+.card-body[b-zi2uow66vw] {
+    padding: 1.25rem;
+}
+
+/* Alert Enhancements */
+.alert-info[b-zi2uow66vw] {
+    background: linear-gradient(135deg, #ebf8ff 0%, #bee3f8 100%);
+    border: 1px solid #90cdf4;
+    color: #2c5282;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin: 0;
+}
+
+/* Search Input Enhancements */
+.form-control:focus[b-zi2uow66vw] {
+    border-color: #74b9ff;
+    box-shadow: 0 0 0 0.2rem rgba(116, 185, 255, 0.25);
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     h1[b-zi2uow66vw] {
         font-size: 1.875rem;
     }
-    
+
     h2[b-zi2uow66vw] {
         font-size: 1.5rem;
     }
-    
+
     .upload-area[b-zi2uow66vw] {
         padding: 2rem 1rem;
     }
-    
+
     .graph-container[b-zi2uow66vw] {
         padding: 1rem;
         margin-top: 1rem;
     }
-    
+
     .package-list[b-zi2uow66vw] {
         max-height: 300px;
+    }
+
+    .mermaid-chart[b-zi2uow66vw] {
+        min-height: 300px;
+    }
+
+    .input-group[b-zi2uow66vw] {
+        flex-direction: column;
+    }
+
+    .input-group .form-control[b-zi2uow66vw],
+    .input-group .btn-primary[b-zi2uow66vw] {
+        border-radius: 0.375rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-check[b-zi2uow66vw] {
+        justify-content: flex-start;
+        margin-top: 0.5rem;
     }
 }

@@ -9,6 +9,7 @@
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="css/app.css" rel="stylesheet" />
     <link href="Rooter.Web.styles.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
 </head>
 
 <body>
@@ -26,6 +27,390 @@
     </div>
 
     <script src="_framework/blazor.server.js"></script>
+    <script>
+        // Enhanced Mermaid configuration with proper sizing and theme
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'base',
+            themeVariables: {
+                fontSize: '13px',
+                fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
+                primaryColor: '#74b9ff',
+                primaryTextColor: '#2c3e50',
+                primaryBorderColor: '#0984e3',
+                lineColor: '#6b7280',
+                secondaryColor: '#e2e8f0',
+                tertiaryColor: '#f8fafc',
+                background: '#ffffff',
+                mainBkg: '#ffffff',
+                secondBkg: '#f1f5f9',
+                tertiaryBkg: '#e2e8f0'
+            },
+            flowchart: {
+                nodeSpacing: 60,
+                rankSpacing: 100,
+                padding: 40,
+                useMaxWidth: false,
+                htmlLabels: true,
+                curve: 'basis',
+                diagramPadding: 20
+            },
+            fontFamily: '"Segoe UI", Tahoma, Geneva, Verdana, sans-serif',
+            fontSize: '13px',
+            wrap: true,
+            maxTextSize: 90000,
+            maxEdges: 999
+        });
+
+        // Enhanced render function with better error handling and timing
+        window.renderMermaidChart = function () {
+            // Reset zoom and pan to ensure clean chart rendering
+            resetZoom();
+
+            // Clear any existing charts first to prevent duplication
+            const existingCharts = document.querySelectorAll('#mermaidChart svg');
+            existingCharts.forEach(chart => chart.remove());
+
+            const mermaidElements = document.querySelectorAll('.mermaid');
+            if (mermaidElements.length > 0) {
+                try {
+                    // Force Mermaid to recalculate dimensions
+                    mermaidElements.forEach(element => {
+                        element.style.visibility = 'hidden';
+                    });
+
+                    mermaid.run().then(() => {
+                        // Show charts after rendering is complete
+                        mermaidElements.forEach(element => {
+                            element.style.visibility = 'visible';
+                        });
+
+                        // Reset zoom again after chart is rendered to ensure proper sizing
+                        setTimeout(() => {
+                            resetZoom();
+                        }, 100);
+
+                        // Initialize controls after chart is fully rendered
+                        setTimeout(() => {
+                            initializeAlwaysOnControls();
+                            updateZoomDisplay();
+                        }, 200);
+                    }).catch((error) => {
+                        console.error('Mermaid rendering error:', error);
+                        // Show charts even if there's an error
+                        mermaidElements.forEach(element => {
+                            element.style.visibility = 'visible';
+                        });
+                    });
+                } catch (error) {
+                    console.error('Mermaid initialization error:', error);
+                    // Show charts even if there's an error
+                    mermaidElements.forEach(element => {
+                        element.style.visibility = 'visible';
+                    });
+                }
+            }
+        };
+
+        // Always-on zoom and pan functionality
+        let currentZoom = 1;
+        let currentTranslateX = 0;
+        let currentTranslateY = 0;
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+        let startTranslateX = 0;
+        let startTranslateY = 0;
+        let chartControlsInitialized = false;
+
+        // Global function to prepare chart container for new content
+        window.prepareForNewChart = function () {
+            // Reset zoom and position
+            currentZoom = 1;
+            currentTranslateX = 0;
+            currentTranslateY = 0;
+            chartControlsInitialized = false;
+
+            // Clear any existing transforms
+            const container = document.getElementById('mermaidContainer');
+            if (container) {
+                container.style.transform = '';
+            }
+
+            // Update display
+            updateZoomDisplay();
+        };
+
+        function zoomIn() {
+            currentZoom = Math.min(currentZoom * 1.2, 5);
+            updateTransform();
+            updateZoomDisplay();
+        }
+
+        function zoomOut() {
+            currentZoom = Math.max(currentZoom / 1.2, 0.1);
+            updateTransform();
+            updateZoomDisplay();
+        }
+
+        function resetZoom() {
+            currentZoom = 1;
+            currentTranslateX = 0;
+            currentTranslateY = 0;
+            updateTransform();
+            updateZoomDisplay();
+
+            // Also clear any chart control initialization flag to ensure fresh setup
+            chartControlsInitialized = false;
+        }
+
+        function updateTransform() {
+            const container = document.getElementById('mermaidContainer');
+            if (container) {
+                container.style.transform = `scale(${currentZoom}) translate(${currentTranslateX}px, ${currentTranslateY}px)`;
+            }
+        }
+
+        function updateZoomDisplay() {
+            const zoomLevel = document.getElementById('zoomLevel');
+            if (zoomLevel) {
+                zoomLevel.textContent = Math.round(currentZoom * 100) + '%';
+            }
+        }
+
+        // Initialize always-on pan and zoom
+        function initializeAlwaysOnControls() {
+            if (chartControlsInitialized) return;
+
+            const container = document.getElementById('mermaidContainer');
+            if (!container) return;
+
+            chartControlsInitialized = true;
+
+            // Always-on mouse drag for panning
+            container.addEventListener('mousedown', function (e) {
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                startTranslateX = currentTranslateX;
+                startTranslateY = currentTranslateY;
+
+                container.style.cursor = 'grabbing';
+                e.preventDefault();
+            });
+
+            document.addEventListener('mousemove', function (e) {
+                if (!isDragging) return;
+
+                const deltaX = (e.clientX - startX) / currentZoom;
+                const deltaY = (e.clientY - startY) / currentZoom;
+
+                currentTranslateX = startTranslateX + deltaX;
+                currentTranslateY = startTranslateY + deltaY;
+
+                updateTransform();
+                e.preventDefault();
+            });
+
+            document.addEventListener('mouseup', function () {
+                if (isDragging) {
+                    isDragging = false;
+                    container.style.cursor = 'grab';
+                }
+            });
+
+            // Always-on mouse wheel for zooming
+            container.addEventListener('wheel', function (e) {
+                e.preventDefault();
+
+                const rect = container.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+
+                const mouseX = e.clientX - centerX;
+                const mouseY = e.clientY - centerY;
+
+                const oldZoom = currentZoom;
+                const zoomSpeed = 1.15; // Slightly more responsive
+
+                if (e.deltaY < 0) {
+                    currentZoom = Math.min(currentZoom * zoomSpeed, 5);
+                } else {
+                    currentZoom = Math.max(currentZoom / zoomSpeed, 0.1);
+                }
+
+                // Adjust translation to zoom towards mouse position
+                const zoomChange = currentZoom / oldZoom;
+                currentTranslateX = mouseX - (mouseX - currentTranslateX) * zoomChange;
+                currentTranslateY = mouseY - (mouseY - currentTranslateY) * zoomChange;
+
+                updateTransform();
+                updateZoomDisplay();
+            });
+
+            // Double-click to reset zoom and position
+            container.addEventListener('dblclick', function (e) {
+                e.preventDefault();
+                resetZoom();
+            });
+
+            // Set initial cursor
+            container.style.cursor = 'grab';
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function (e) {
+                if (e.target.tagName.toLowerCase() === 'input' || e.target.tagName.toLowerCase() === 'textarea') return;
+
+                switch (e.key) {
+                    case '+':
+                    case '=':
+                        if (e.ctrlKey || e.metaKey) {
+                            e.preventDefault();
+                            zoomIn();
+                        }
+                        break;
+                    case '-':
+                        if (e.ctrlKey || e.metaKey) {
+                            e.preventDefault();
+                            zoomOut();
+                        }
+                        break;
+                    case '0':
+                        if (e.ctrlKey || e.metaKey) {
+                            e.preventDefault();
+                            resetZoom();
+                        }
+                        break;
+                }
+            });
+        }
+
+        // Native browser fullscreen implementation
+        let isCustomFullscreen = false;
+
+        function toggleFullscreen() {
+            const wrapper = document.querySelector('.mermaid-container-wrapper');
+            const btn = document.getElementById('fullscreenBtn');
+            const btnIcon = btn?.querySelector('i');
+
+            if (!wrapper || !btn || !btnIcon) return;
+
+            // Try native fullscreen first
+            if (!document.fullscreenElement) {
+                // Enter native fullscreen
+                if (wrapper.requestFullscreen) {
+                    wrapper.requestFullscreen().then(() => {
+                        btn.classList.add('active');
+                        btnIcon.className = 'fas fa-compress';
+                        btn.title = 'Exit Fullscreen (Press Esc)';
+
+                        // Show fullscreen package selector
+                        const fullscreenSelector = document.getElementById('fullscreenPackageSelector');
+                        if (fullscreenSelector) {
+                            fullscreenSelector.style.display = 'block';
+                        }
+                    }).catch((err) => {
+                        console.log('Fullscreen failed, falling back to custom implementation');
+                        customFullscreen(true);
+                    });
+                } else {
+                    // Fallback to custom fullscreen
+                    customFullscreen(true);
+                }
+            } else {
+                // Exit native fullscreen
+                if (document.exitFullscreen) {
+                    document.exitFullscreen().then(() => {
+                        btn.classList.remove('active');
+                        btnIcon.className = 'fas fa-expand';
+                        btn.title = 'Toggle Fullscreen';
+
+                        // Hide fullscreen package selector
+                        const fullscreenSelector = document.getElementById('fullscreenPackageSelector');
+                        if (fullscreenSelector) {
+                            fullscreenSelector.style.display = 'none';
+                        }
+                    });
+                } else {
+                    // Fallback to custom fullscreen exit
+                    customFullscreen(false);
+                }
+            }
+        }
+
+        // Fallback custom fullscreen implementation (much simpler)
+        function customFullscreen(enter) {
+            const wrapper = document.querySelector('.mermaid-container-wrapper');
+            const btn = document.getElementById('fullscreenBtn');
+            const btnIcon = btn?.querySelector('i');
+            const fullscreenSelector = document.getElementById('fullscreenPackageSelector');
+
+            if (enter) {
+                isCustomFullscreen = true;
+                wrapper.style.position = 'fixed';
+                wrapper.style.top = '0';
+                wrapper.style.left = '0';
+                wrapper.style.width = '100vw';
+                wrapper.style.height = '100vh';
+                wrapper.style.zIndex = '99999';
+                wrapper.style.background = '#ffffff';
+
+                document.body.style.overflow = 'hidden';
+
+                btn.classList.add('active');
+                btnIcon.className = 'fas fa-compress';
+                btn.title = 'Exit Fullscreen (Press Esc)';
+
+                if (fullscreenSelector) {
+                    fullscreenSelector.style.display = 'block';
+                }
+            } else {
+                isCustomFullscreen = false;
+                wrapper.style.position = '';
+                wrapper.style.top = '';
+                wrapper.style.left = '';
+                wrapper.style.width = '';
+                wrapper.style.height = '';
+                wrapper.style.zIndex = '';
+                wrapper.style.background = '';
+
+                document.body.style.overflow = '';
+
+                btn.classList.remove('active');
+                btnIcon.className = 'fas fa-expand';
+                btn.title = 'Toggle Fullscreen';
+
+                if (fullscreenSelector) {
+                    fullscreenSelector.style.display = 'none';
+                }
+            }
+        }
+
+        // Listen for native fullscreen changes
+        document.addEventListener('fullscreenchange', function () {
+            const btn = document.getElementById('fullscreenBtn');
+            const btnIcon = btn?.querySelector('i');
+            const fullscreenSelector = document.getElementById('fullscreenPackageSelector');
+
+            if (!document.fullscreenElement && btn && btnIcon) {
+                // Exited fullscreen
+                btn.classList.remove('active');
+                btnIcon.className = 'fas fa-expand';
+                btn.title = 'Toggle Fullscreen';
+
+                if (fullscreenSelector) {
+                    fullscreenSelector.style.display = 'none';
+                }
+            }
+        });
+
+        // Escape key handler for custom fullscreen (native fullscreen handles this automatically)
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && isCustomFullscreen) {
+                customFullscreen(false);
+            }
+        });
+    </script>
 </body>
 
 </html>

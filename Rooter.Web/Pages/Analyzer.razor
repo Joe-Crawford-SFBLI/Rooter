@@ -128,8 +128,106 @@
         }
 
         <div class="mt-4">
-            <h3>Dependency Graph (JSON)</h3>
-            <pre class="bg-light p-3" style="max-height: 400px; overflow-y: auto;">@_dependencyGraphJson</pre>
+            <h3>Package Dependency Visualization</h3>
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Select Package to Visualize</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Search for a package..."
+                                    @bind="_searchTerm" @oninput="_OnSearchInputChanged" list="packageOptions" />
+                                <datalist id="packageOptions">
+                                    @foreach (var package in _filteredPackageOptions)
+                                    {
+                                        <option value="@package.DisplayName">@package.Name v@package.Version</option>
+                                    }
+                                </datalist>
+                                <button class="btn btn-primary" type="button" @onclick="_GenerateChart">
+                                    Generate Chart
+                                </button>
+                            </div>
+                            @if (_allPackageOptions.Any())
+                            {
+                                <div class="mt-2 text-muted small">
+                                    @_allPackageOptions.Count total packages available. Type to search or select from dropdown.
+                                </div>
+                            }
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="showAllVersions"
+                                    @bind="_showAllVersions" @bind:after="_OnShowAllVersionsChanged" />
+                                <label class="form-check-label" for="showAllVersions">
+                                    Show all versions
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(_selectedPackageInfo))
+                    {
+                        <div class="mt-3 alert alert-info">
+                            <strong>Selected:</strong> @_selectedPackageInfo
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(_mermaidChart))
+            {
+                <div class="mt-4" id="chartSection">
+                    <div class="card" id="chartCard">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Dependency Graph</h5>
+                            <div class="chart-controls">
+                                <span class="zoom-level-display me-3" id="zoomLevel">100%</span>
+                                <button class="btn btn-sm btn-outline-success" onclick="toggleFullscreen()" id="fullscreenBtn"
+                                    title="Toggle Fullscreen">
+                                    <i class="fas fa-expand"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="mermaid-container-wrapper">
+                                <!-- Fullscreen package selector (hidden by default) -->
+                                <div class="fullscreen-package-selector" id="fullscreenPackageSelector" style="display: none;">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Search for a package..."
+                                            @bind="_searchTerm" @oninput="_OnSearchInputChanged"
+                                            list="packageOptionsFullscreen" />
+                                        <datalist id="packageOptionsFullscreen">
+                                            @foreach (var package in _filteredPackageOptions)
+                                            {
+                                                <option value="@package.DisplayName">@package.Name v@package.Version</option>
+                                            }
+                                        </datalist>
+                                        <button class="btn btn-primary" type="button" @onclick="_GenerateChart">
+                                            Generate Chart
+                                        </button>
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(_selectedPackageInfo))
+                                    {
+                                        <div class="mt-2 alert alert-info mb-0">
+                                            <strong>Selected:</strong> @_selectedPackageInfo
+                                        </div>
+                                    }
+                                </div>
+
+                                <div class="interaction-hint">
+                                    <small class="text-muted">💡 Drag to pan • Scroll to zoom • Double-click to reset</small>
+                                </div>
+                                <div class="mermaid-container" id="mermaidContainer">
+                                    <div id="mermaidChart" class="mermaid-chart">
+                                        @((MarkupString)_mermaidChart)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 }
