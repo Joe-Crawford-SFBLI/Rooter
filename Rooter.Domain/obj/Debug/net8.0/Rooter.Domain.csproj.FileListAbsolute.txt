@@ -1,0 +1,12 @@
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Domain\bin\Debug\net8.0\Rooter.Domain.deps.json
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Domain\bin\Debug\net8.0\Rooter.Domain.dll
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Domain\bin\Debug\net8.0\Rooter.Domain.pdb
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Domain\obj\Debug\net8.0\Rooter.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Domain\obj\Debug\net8.0\Rooter.Domain.AssemblyInfoInputs.cache
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Domain\obj\Debug\net8.0\Rooter.Domain.AssemblyInfo.cs
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Domain\obj\Debug\net8.0\Rooter.Domain.csproj.CoreCompileInputs.cache
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Domain\obj\Debug\net8.0\Rooter.Domain.sourcelink.json
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Domain\obj\Debug\net8.0\Rooter.Domain.dll
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Domain\obj\Debug\net8.0\refint\Rooter.Domain.dll
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Domain\obj\Debug\net8.0\Rooter.Domain.pdb
+C:\Users\J05273\source\repos\Joe-Crawford-SFBLI\Rooter\Rooter.Domain\obj\Debug\net8.0\ref\Rooter.Domain.dll
