@@ -305,7 +305,8 @@ pre[b-zi2uow66vw]::-webkit-scrollbar-thumb:hover {
     height: 600px;
     background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
     border-radius: 0 0 8px 8px;
-    overflow: auto; /* Changed from hidden to auto to prevent cutoff */
+    overflow: auto;
+    /* Changed from hidden to auto to prevent cutoff */
 }
 
 /* True fullscreen styles */
@@ -516,7 +517,8 @@ pre[b-zi2uow66vw]::-webkit-scrollbar-thumb:hover {
 .mermaid-container[b-zi2uow66vw] {
     width: 100%;
     height: 100%;
-    overflow: visible; /* Changed to visible to prevent cutoff */
+    overflow: visible;
+    /* Changed to visible to prevent cutoff */
     position: relative;
     cursor: grab;
     transition: transform 0.2s ease;
